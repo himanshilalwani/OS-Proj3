@@ -184,33 +184,40 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    // if (pid == 0)
-    // {
-    //     // Writer processs
-    //     // Wait for write semaphore
-    //     // if (sem_wait(sem_write) == -1)
-    //     // {
-    //     //     perror("Failed to wait on write semaphore");
-    //     //     exit(EXIT_FAILURE);
-    //     // }
+    if (pid == 0)
+    {
+        // Writer processs
+        // Wait for write semaphore
+        // if (sem_wait(sem_write) == -1)
+        // {
+        //     perror("Failed to wait on write semaphore");
+        //     exit(EXIT_FAILURE);
+        // }
+        int random_time = (rand() % 5) + 1;
+        char random_time_str[10];
+        sprintf(random_time_str, "%d", random_time);
 
-    //     // int random_record = rand() % i; // generate a random number between 0 and i-1
-    //     // int random_time = (rand() % 5) + 1;
+        char key2_str[10];
+        sprintf(key2_str, "%d", key2);
 
-    //     // if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_record, "-d", random_time, "-s", key2, NULL) < 0)
-    //     // {
-    //     //     perror("Exec Error");
-    //     //     exit(EXIT_FAILURE);
-    //     // }
-    //     // // Signal write semaphore
-    //     // if (sem_post(sem_write) == -1)
-    //     // {
-    //     //     perror("Failed to signal on write semaphore");
-    //     //     exit(EXIT_FAILURE);
-    //     // }
-    //     // sleep(1);
-    //     // exit(EXIT_SUCCESS);
-    // }
+        int random_record = rand() % i; // generate a random number between 0 and i-1
+        char random_record_str[10];
+        sprintf(random_record_str,"%d",random_record);
+
+        if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_record_str, "-d", random_time_str, "-s", key2_str, NULL) < 0)
+        {
+            perror("Exec Error");
+            exit(EXIT_FAILURE);
+        }
+        // // Signal write semaphore
+        // if (sem_post(sem_write) == -1)
+        // {
+        //     perror("Failed to signal on write semaphore");
+        //     exit(EXIT_FAILURE);
+        // }
+        sleep(1);
+        exit(EXIT_SUCCESS);
+    }
     if (pid > 0)
     {
         // Fork multiple reader processes
@@ -279,9 +286,10 @@ int main()
 
                 char key2_str[10];
                 sprintf(key2_str, "%d", key2);
-                printf("List String: %s \n", list_string);
-                printf("Time: %s\n", random_time_str);
+                // printf("List String: %s \n", list_string);
+                // printf("Time: %s\n", random_time_str);
                 // invoke reader
+                printf("Reader Number %d Executing:", j);
                 if (execlp("./reader", "./reader", "-f", "students.csv", "-l", list_string, "-d", random_time_str, "-s", key2_str, NULL) < 0)
                 {
                     perror("Exec Error");

@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     char *filename;
     char *recid_str;
     int time;
-    int shmid2;
+    int key2;
     int opt;
     while ((opt = getopt(argc, argv, "f:l:d:s:")) != -1)
     {
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
             time = atoi(optarg);
             break;
         case 's':
-            shmid2 = atoi(optarg);
+            key2 = atoi(optarg);
             break;
         default:
             printf("Usage: %s -f filename -l recid[,recid] -d time -s shmid\n", argv[0]);
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    key_t key2 = 9999;
+    int shmid2;
 
     // Locate the shared memory segment
     shmid2 = shmget(key2, sizeof(student), 0666);

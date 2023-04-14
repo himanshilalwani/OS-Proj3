@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 
         token = strtok(NULL, ",");
     }
-    printf("sleeping for %d seconds\n", time);
+
     sleep(time);
     // read the lines in recid_list
     for (int i = 0; i < recid_count; i++)

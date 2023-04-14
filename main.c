@@ -12,9 +12,8 @@
 #define SEM_WRITE "/write_sem"
 #define SEM_READ "/read_sem"
 
-#define NUM_READERS 3 //this is readers at a time
-#define MAX_LINES_READ 20 //this is maximum number of lines a reader can read at a time
-
+#define NUM_READERS 3    // this is readers at a time
+#define MAX_LINES_READ 9 // this is maximum number of lines a reader can read at a time
 
 struct analytics
 {
@@ -176,11 +175,6 @@ int main()
     a->max_delay = 0;
     a->num_records = 0;
 
-    // Create semaphores
-    create_semaphore(SEM_MUTEX, &sem_mutex, 1);
-    create_semaphore(SEM_WRITE, &sem_write, 1);
-    create_semaphore(SEM_READ, &sem_read, 1);
-
     // Fork writer process
     pid_t pid = fork();
 
@@ -190,34 +184,34 @@ int main()
         exit(EXIT_FAILURE);
     }
 
-    if (pid == 0)
-    {
-        // Writer processs
-        // Wait for write semaphore
-        if (sem_wait(sem_write) == -1)
-        {
-            perror("Failed to wait on write semaphore");
-            exit(EXIT_FAILURE);
-        }
+    // if (pid == 0)
+    // {
+    //     // Writer processs
+    //     // Wait for write semaphore
+    //     // if (sem_wait(sem_write) == -1)
+    //     // {
+    //     //     perror("Failed to wait on write semaphore");
+    //     //     exit(EXIT_FAILURE);
+    //     // }
 
-        int random_record = rand() % i; // generate a random number between 0 and i-1
-        int random_time = (rand() % 5) + 1;
+    //     // int random_record = rand() % i; // generate a random number between 0 and i-1
+    //     // int random_time = (rand() % 5) + 1;
 
-        if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_record, "-d", random_time, "-s", key2, NULL) < 0)
-        {
-            perror("Exec Error");
-            exit(EXIT_FAILURE);
-        }
-        // Signal write semaphore
-        if (sem_post(sem_write) == -1)
-        {
-            perror("Failed to signal on write semaphore");
-            exit(EXIT_FAILURE);
-        }
-        sleep(1);
-        exit(EXIT_SUCCESS);
-    }
-    else
+    //     // if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_record, "-d", random_time, "-s", key2, NULL) < 0)
+    //     // {
+    //     //     perror("Exec Error");
+    //     //     exit(EXIT_FAILURE);
+    //     // }
+    //     // // Signal write semaphore
+    //     // if (sem_post(sem_write) == -1)
+    //     // {
+    //     //     perror("Failed to signal on write semaphore");
+    //     //     exit(EXIT_FAILURE);
+    //     // }
+    //     // sleep(1);
+    //     // exit(EXIT_SUCCESS);
+    // }
+    if (pid > 0)
     {
         // Fork multiple reader processes
         for (int j = 0; j < NUM_READERS; j++)
@@ -233,87 +227,68 @@ int main()
             if (reader_pid == 0)
             {
                 // Reader process
-                // Wait for mutex semaphore
-                if (sem_wait(sem_mutex) == -1)
-                {
-                    perror("Failed to wait on mutex semaphore");
-                    exit(EXIT_FAILURE);
-                }
-
-                // Increment read count and check if first reader
-                if (sem_wait(sem_read) == -1)
-                {
-                    perror("Failed to wait on read semaphore");
-                    exit(EXIT_FAILURE);
-                }
-
-                if (sem_post(sem_mutex) == -1)
-                {
-                    perror("Failed to signal mutex semaphore");
-                    exit(EXIT_FAILURE);
-                }
 
                 // Read student details
                 srand(time(NULL));
-                int x = rand() % MAX_LINES_READ; //x is the random num of records the reader j can read
-                int* list = malloc(x*sizeof(int));
+                int x = rand() % MAX_LINES_READ; // x is the random num of records the reader j can read
+                int *list = malloc(x * sizeof(int));
                 int num_to_read = 0;
 
-                //for random line number 
+                // for random line number
                 srand(time(NULL));
 
-                //update the list to include all the line numbers to read
-                while(num_to_read<x){
-                    int line_num = rand() % (i-1);
+                // update the list to include all the line numbers to read
+                while (num_to_read < x)
+                {
+                    int line_num = rand() % (i - 1);
                     int exists = 0;
-                     // Check if the number already exists in the list
-                    for (int k = 0; k < num_to_read; k++) {
-                        if (list[k] == line_num) {
+                    // Check if the number already exists in the list
+                    for (int k = 0; k < num_to_read; k++)
+                    {
+                        if (list[k] == line_num)
+                        {
                             exists = 1;
                             break;
                         }
                     }
                     // If the number is not in the list, add it
-                    if (!exists) {
+                    if (!exists)
+                    {
                         list[num_to_read] = line_num;
                         num_to_read++;
                     }
                 }
-                
+
                 // Create a string to combine all values in list separated by comma
                 char list_string[100]; // assuming the maximum length of the resulting string is 100 characters
                 int index = 0;
 
-                for (int i = 0; i < num_to_read; i++) {
+                for (int i = 0; i < num_to_read; i++)
+                {
                     index += sprintf(list_string + index, "%d,", list[i]);
                 }
                 // Remove the trailing comma
-                if (num_to_read > 0) {
+                if (num_to_read > 0)
+                {
                     list_string[index - 1] = '\0';
                 }
-                
-                int random_number = rand() % i; // generate a random number between 0 and i-1
-                int random_time = (rand() % 5) + 1;
 
-                //invoke reader
-                if (execlp("./reader", "./reader", "-f", "students.csv", "-l", list_string, "-d", random_time, "-s", key2, NULL) < 0)
+                int random_time = (rand() % 5) + 1;
+                char random_time_str[10];
+                sprintf(random_time_str, "%d", random_time);
+
+                char key2_str[10];
+                sprintf(key2_str, "%d", key2);
+                printf("List String: %s \n", list_string);
+                printf("Time: %s\n", random_time_str);
+                // invoke reader
+                if (execlp("./reader", "./reader", "-f", "students.csv", "-l", list_string, "-d", random_time_str, "-s", key2_str, NULL) < 0)
                 {
                     perror("Exec Error");
                     exit(EXIT_FAILURE);
                 }
 
-
-
                 free(list);
-
-
-
-                // Decrement read count and check if last reader
-                if (sem_post(sem_read) == -1)
-                {
-                    perror("Failed to signal read semaphore");
-                    exit(EXIT_FAILURE);
-                }
 
                 exit(EXIT_SUCCESS);
             }

@@ -195,6 +195,14 @@ int main()
             exit(EXIT_FAILURE);
         }
 
+        int random_number = rand() % i; // generate a random number between 0 and i-1
+        int random_time = (rand() % 5) + 1;
+
+        if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_number, "-d", random_time, "-s", key2, NULL) < 0)
+        {
+            perror("Exec Error");
+            exit(EXIT_FAILURE);
+        }
         // Signal write semaphore
         if (sem_post(sem_write) == -1)
         {
@@ -202,7 +210,55 @@ int main()
             exit(EXIT_FAILURE);
         }
         sleep(1);
+        exit(EXIT_SUCCESS);
     }
+    else
+    {
+        // Fork multiple reader processes
+        for (int j = 0; j < 3; j++)
+        {
+            pid_t reader_pid = fork();
 
-    exit(EXIT_SUCCESS);
+            if (reader_pid < 0)
+            {
+                perror("Failed to fork");
+                exit(EXIT_FAILURE);
+            }
+
+            if (reader_pid == 0)
+            {
+                // Reader process
+                // Wait for mutex semaphore
+                if (sem_wait(sem_mutex) == -1)
+                {
+                    perror("Failed to wait on mutex semaphore");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Increment read count and check if first reader
+                if (sem_wait(sem_read) == -1)
+                {
+                    perror("Failed to wait on read semaphore");
+                    exit(EXIT_FAILURE);
+                }
+
+                if (sem_post(sem_mutex) == -1)
+                {
+                    perror("Failed to signal mutex semaphore");
+                    exit(EXIT_FAILURE);
+                }
+
+                // Read student details
+
+                // Decrement read count and check if last reader
+                if (sem_post(sem_read) == -1)
+                {
+                    perror("Failed to signal read semaphore");
+                    exit(EXIT_FAILURE);
+                }
+
+                exit(EXIT_SUCCESS);
+            }
+        }
+    }
 }

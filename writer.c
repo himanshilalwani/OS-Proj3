@@ -6,6 +6,7 @@
 #include <sys/shm.h>
 #include <semaphore.h>
 #include <fcntl.h>
+#include <time.h>
 
 #define SHMSIZE 1024
 
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
     }
 
     char *filename;
-    int time;
+    int delay_time;
     int key2;
     int opt;
     int rec;
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
             rec = atoi(optarg);
             break;
         case 'd':
-            time = atoi(optarg);
+            delay_time = atoi(optarg);
             break;
         case 's':
             key2 = atoi(optarg);
@@ -122,9 +123,85 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    
+    // initialize the grades array with 8 grades
+    float grades[8] = {3.0, 2.5, 1.5, 4.0, 2.0, 3.5, 0.5, 1.0};
+    srand(time(NULL));
+    // randomly select one or more grades to modify
+    int num_grades_to_modify = rand() % 8 + 1; // modify at least one course
 
+    for (int i = 0; i < num_grades_to_modify; i++)
+    {
+        // initialize the random number generator
+        srand(time(NULL));
 
+        // pick a random value from the grades array
+        int index = rand() % 8;
+        float random_grade = grades[index];
+        switch (i)
+        {
+        case 0:
+            data[rec].g1 = random_grade;
+            break;
+        case 1:
+            data[rec].g2 = random_grade;
+            break;
+        case 2:
+            data[rec].g3 = random_grade;
+            break;
+        case 3:
+            data[rec].g4 = random_grade;
+            break;
+        case 4:
+            data[rec].g5 = random_grade;
+            break;
+        case 5:
+            data[rec].g6 = random_grade;
+            break;
+        case 6:
+            data[rec].g7 = random_grade;
+            break;
+        case 7:
+            data[rec].g8 = random_grade;
+            break;
+        }
+    }
 
+    // modify the gpa based on new grades
+    data[rec].GPA = (data[rec].g1 + data[rec].g2 + data[rec].g3 + data[rec].g4 + data[rec].g5 + data[rec].g6 + data[rec].g7 + data[rec].g8) / 8.0;
 
+    // open the students.csv file for writing
+    FILE *fp = fopen("students.csv", "w");
+    if (fp == NULL)
+    {
+        printf("Failed to open file\n");
+        return 1;
+    }
+
+    int num_students = 0;
+    while (data[num_students].studentID != 0)
+    {
+        num_students++;
+    }
+
+    // loop through the array of student structs and write each struct to the file
+    for (int i = 0; i < num_students; i++)
+    {
+        fprintf(fp, "%d,", data[i].studentID);
+        fprintf(fp, "%s,", data[i].lastName);
+        fprintf(fp, "%s,", data[i].firstName);
+        fprintf(fp, "%.1f,", data[i].g1);
+        fprintf(fp, "%.1f,", data[i].g2);
+        fprintf(fp, "%.1f,", data[i].g3);
+        fprintf(fp, "%.1f,", data[i].g4);
+        fprintf(fp, "%.1f,", data[i].g5);
+        fprintf(fp, "%.1f,", data[i].g6);
+        fprintf(fp, "%.1f,", data[i].g7);
+        fprintf(fp, "%.1f,", data[i].g8);
+        fprintf(fp, "%.1f\n", data[i].GPA);
+    }
+
+    // Close file
+    fclose(fp);
+
+    sleep(delay_time);
 }

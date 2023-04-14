@@ -26,15 +26,15 @@ typedef struct
     int studentID;
     char lastName[20];
     char firstName[20];
-    int g1;
-    int g2;
-    int g3;
-    int g4;
-    int g5;
-    int g6;
-    int g7;
-    int g8;
-    int GPA;
+    float g1;
+    float g2;
+    float g3;
+    float g4;
+    float g5;
+    float g6;
+    float g7;
+    float g8;
+    float GPA;
 } student;
 
 void create_semaphore(const char *name, sem_t **sem, int value)
@@ -134,31 +134,31 @@ int main()
         strcpy(data[i].firstName, token);
 
         token = strtok(NULL, ",");
-        data[i].g1 = atoi(token);
+        data[i].g1 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g2 = atoi(token);
+        data[i].g2 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g3 = atoi(token);
+        data[i].g3 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g4 = atoi(token);
+        data[i].g4 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g5 = atoi(token);
+        data[i].g5 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g6 = atoi(token);
+        data[i].g6 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g7 = atoi(token);
+        data[i].g7 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].g8 = atoi(token);
+        data[i].g8 = atof(token);
 
         token = strtok(NULL, ",");
-        data[i].GPA = atoi(token);
+        data[i].GPA = atof(token);
         i++;
     }
 
@@ -195,10 +195,10 @@ int main()
             exit(EXIT_FAILURE);
         }
 
-        int random_number = rand() % i; // generate a random number between 0 and i-1
+        int random_record = rand() % i; // generate a random number between 0 and i-1
         int random_time = (rand() % 5) + 1;
 
-        if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_number, "-d", random_time, "-s", key2, NULL) < 0)
+        if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_record, "-d", random_time, "-s", key2, NULL) < 0)
         {
             perror("Exec Error");
             exit(EXIT_FAILURE);

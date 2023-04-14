@@ -18,15 +18,15 @@ typedef struct
     int studentID;
     char lastName[20];
     char firstName[20];
-    int g1;
-    int g2;
-    int g3;
-    int g4;
-    int g5;
-    int g6;
-    int g7;
-    int g8;
-    int GPA;
+    float g1;
+    float g2;
+    float g3;
+    float g4;
+    float g5;
+    float g6;
+    float g7;
+    float g8;
+    float GPA;
 } student;
 
 // define the structure for the analytics
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     char *filename;
     char *recid_str;
     int time;
-    int shmid;
+    int shmid2;
     int opt;
     while ((opt = getopt(argc, argv, "f:l:d:s:")) != -1)
     {
@@ -68,23 +68,12 @@ int main(int argc, char *argv[])
             time = atoi(optarg);
             break;
         case 's':
-            shmid = atoi(optarg);
+            shmid2 = atoi(optarg);
             break;
         default:
             printf("Usage: %s -f filename -l recid[,recid] -d time -s shmid\n", argv[0]);
             return 1;
         }
-    }
-
-    // parse record IDs to lookup
-    int recid_list[100];
-    int recid_count = 0;
-    char *token = strtok(recid_str, ",");
-    while (token != NULL)
-    {
-        recid_list[recid_count++] = atoi(token);
-
-        token = strtok(NULL, ",");
     }
 
     int shmid1;
@@ -110,7 +99,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    int shmid2;
     key_t key2 = 9999;
 
     // Locate the shared memory segment
@@ -131,5 +119,35 @@ int main(int argc, char *argv[])
     {
         perror("shmat failure");
         exit(1);
+    }
+
+    // parse record IDs to lookup
+    int recid_list[100];
+    int recid_count = 0;
+    char *token = strtok(recid_str, ",");
+    while (token != NULL)
+    {
+        recid_list[recid_count++] = atoi(token);
+
+        token = strtok(NULL, ",");
+    }
+    printf("sleeping for %d seconds\n", time);
+    sleep(time);
+    // read the lines in recid_list
+    for (int i = 0; i < recid_count; i++)
+    {
+        printf("Student ID: %d\n", data[recid_list[i]].studentID);
+        printf("First Name: %s\n", data[recid_list[i]].firstName);
+        printf("Last Name: %s\n", data[recid_list[i]].lastName);
+        printf("Grade 1: %f\n", data[recid_list[i]].g1);
+        printf("Grade 2: %f\n", data[recid_list[i]].g2);
+        printf("Grade 3: %f\n", data[recid_list[i]].g3);
+        printf("Grade 4: %f\n", data[recid_list[i]].g4);
+        printf("Grade 5: %f\n", data[recid_list[i]].g5);
+        printf("Grade 6: %f\n", data[recid_list[i]].g6);
+        printf("Grade 7: %f\n", data[recid_list[i]].g7);
+        printf("Grade 8: %f\n", data[recid_list[i]].g8);
+        printf("GPA: %f\n", data[recid_list[i]].GPA);
+        printf("=================================\n");
     }
 }

@@ -77,6 +77,9 @@ int main(int argc, char *argv[])
         }
     }
 
+    sem_t *wrt;
+    wrt = sem_open("wrt", O_CREAT, 0666, 1);
+
     int shmid1;
     key_t key = 1234;
 
@@ -123,17 +126,17 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    sem_wait(wrt);
+
     // initialize the grades array with 8 grades
     float grades[8] = {3.0, 2.5, 1.5, 4.0, 2.0, 3.5, 0.5, 1.0};
     srand(time(NULL));
     // randomly select one or more grades to modify
     int num_grades_to_modify = rand() % 8 + 1; // modify at least one course
-
+    // initialize the random number generator
+    srand(time(NULL));
     for (int i = 0; i < num_grades_to_modify; i++)
     {
-        // initialize the random number generator
-        srand(time(NULL));
-
         // pick a random value from the grades array
         int index = rand() % 8;
         float random_grade = grades[index];
@@ -204,4 +207,9 @@ int main(int argc, char *argv[])
     fclose(fp);
 
     sleep(delay_time);
+
+    sem_post(wrt);
+
+    sem_close(wrt);
+    sem_unlink("wrt");
 }

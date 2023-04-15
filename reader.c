@@ -76,6 +76,29 @@ int main(int argc, char *argv[])
         }
     }
 
+    // initialize semaphores
+    sem_t *mutex;
+    sem_t *wrt;
+
+    int shmid3;
+    key_t key3 = 5555;
+
+    shmid3 = shmget(key3, sizeof(int), 0666);
+
+    // check for faiure (no segment found with that key)
+    if (shmid3 < 0)
+    {
+        perror("shmget failure");
+        exit(1);
+    }
+
+    // Attach the segment to the data space
+    int *readcount = shmat(shmid3, NULL, 0);
+
+    mutex = sem_open("mutex", O_CREAT, 0666, 1);
+    wrt = sem_open("wrt", O_CREAT, 0666, 1);
+
+    // initialize shared memory
     int shmid1;
     key_t key = 1234;
 
@@ -121,6 +144,17 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    // if semaphore's value > 0, resource is AVAILABLE & decrement value by 1
+    // if semaphore current value == 0 , call BLOCKS (process waits) till value > 0
+    sem_wait(mutex);
+    *readcount += 1;
+    if (*readcount == 1)
+    {
+        sem_wait(wrt);
+    }
+    sem_post(mutex);
+
+    printf("reading records %s\n", recid_str);
     // parse record IDs to lookup
     int recid_list[100];
     int recid_count = 0;
@@ -133,6 +167,9 @@ int main(int argc, char *argv[])
     }
 
     sleep(time);
+    sem_t *output_sem;
+    output_sem = sem_open("/output_sem", O_CREAT, 0644, 1);
+    sem_wait(output_sem);
     // read the lines in recid_list
     for (int i = 0; i < recid_count; i++)
     {
@@ -150,4 +187,20 @@ int main(int argc, char *argv[])
         printf("GPA: %f\n", data[recid_list[i]].GPA);
         printf("=================================\n");
     }
+
+    sem_post(output_sem);
+    sem_wait(mutex);
+    *readcount -= 1;
+    if (*readcount == 0)
+    {
+        sem_post(wrt);
+    }
+    sem_post(mutex);
+
+    sem_close(mutex);
+    sem_unlink("mutex");
+    sem_close(wrt);
+    sem_unlink("wrt");
+
+    return 0;
 }

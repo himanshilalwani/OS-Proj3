@@ -12,8 +12,9 @@
 #define SEM_WRITE "/write_sem"
 #define SEM_READ "/read_sem"
 
-#define NUM_READERS 3    // this is readers at a time
-#define MAX_LINES_READ 9 // this is maximum number of lines a reader can read at a time
+#define NUM_READERS 2    // this is readers at a time
+#define MAX_LINES_READ 500 // this is maximum number of lines a reader can read at a time
+#define FILENAME "Dataset-500.txt"
 
 struct analytics
 {
@@ -127,8 +128,8 @@ int main()
     char line[1024];
     char *token;
     int i = 0;
-
-    fp = fopen("students.csv", "r");
+    
+    fp = fopen(FILENAME, "r");
     if (fp == NULL)
     {
         perror("Failed to open CSV file");
@@ -138,43 +139,44 @@ int main()
     // load data in the student struct
     while (fgets(line, 1024, fp))
     {
-        token = strtok(line, ",");
+        token = strtok(line, " ");
         data[i].studentID = atoi(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         strcpy(data[i].lastName, token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         strcpy(data[i].firstName, token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g1 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g2 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g3 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g4 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g5 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g6 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g7 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].g8 = atof(token);
 
-        token = strtok(NULL, ",");
+        token = strtok(NULL, " ");
         data[i].GPA = atof(token);
         i++;
     }
+    
 
     fclose(fp);
     // initialize struct values
@@ -196,23 +198,23 @@ int main()
 
     if (pid == 0)
     {
-        srand(time(NULL));
-        int random_time = (rand() % 5) + 1;
-        char random_time_str[10];
-        sprintf(random_time_str, "%d", random_time);
+        // srand(time(NULL));
+        // int random_time = (rand() % 5) + 1;
+        // char random_time_str[10];
+        // sprintf(random_time_str, "%d", random_time);
 
-        char key2_str[10];
-        sprintf(key2_str, "%d", key2);
+        // char key2_str[10];
+        // sprintf(key2_str, "%d", key2);
 
-        int random_record = rand() % i; // generate a random number between 0 and i-1
-        char random_record_str[10];
-        sprintf(random_record_str, "%d", random_record);
+        // int random_record = rand() % i; // generate a random number between 0 and i-1
+        // char random_record_str[10];
+        // sprintf(random_record_str, "%d", random_record);
 
-        if (execlp("./writer", "./writer", "-f", "students.csv", "-l", random_record_str, "-d", random_time_str, "-s", key2_str, NULL) < 0)
-        {
-            perror("Exec Error");
-            exit(EXIT_FAILURE);
-        }
+        // if (execlp("./writer", "./writer", "-f", FILENAME, "-l", random_record_str, "-d", random_time_str, "-s", key2_str, NULL) < 0)
+        // {
+        //     perror("Exec Error");
+        //     exit(EXIT_FAILURE);
+        // }
 
         exit(EXIT_SUCCESS);
     }
@@ -288,7 +290,7 @@ int main()
                 // printf("Time: %s\n", random_time_str);
                 // invoke reader
                 printf("Reader Number %d Executing:", j);
-                if (execlp("./reader", "./reader", "-f", "students.csv", "-l", list_string, "-d", random_time_str, "-s", key2_str, NULL) < 0)
+                if (execlp("./reader", "./reader", "-f", FILENAME, "-l", list_string, "-d", random_time_str, "-s", key2_str, NULL) < 0)
                 {
                     perror("Exec Error");
                     exit(EXIT_FAILURE);

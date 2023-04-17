@@ -13,6 +13,8 @@
 #define SEM_WRITE "/write_sem"
 #define SEM_READ "/read_sem"
 
+#define FILENAME "Dataset-500.txt"
+
 typedef struct
 {
     int studentID;
@@ -176,15 +178,15 @@ int main(int argc, char *argv[])
         printf("Student ID: %d\n", data[recid_list[i]].studentID);
         printf("First Name: %s\n", data[recid_list[i]].firstName);
         printf("Last Name: %s\n", data[recid_list[i]].lastName);
-        printf("Grade 1: %f\n", data[recid_list[i]].g1);
-        printf("Grade 2: %f\n", data[recid_list[i]].g2);
-        printf("Grade 3: %f\n", data[recid_list[i]].g3);
-        printf("Grade 4: %f\n", data[recid_list[i]].g4);
-        printf("Grade 5: %f\n", data[recid_list[i]].g5);
-        printf("Grade 6: %f\n", data[recid_list[i]].g6);
-        printf("Grade 7: %f\n", data[recid_list[i]].g7);
-        printf("Grade 8: %f\n", data[recid_list[i]].g8);
-        printf("GPA: %f\n", data[recid_list[i]].GPA);
+        printf("Grade 1: %.2f\n", data[recid_list[i]].g1);
+        printf("Grade 2: %.2f\n", data[recid_list[i]].g2);
+        printf("Grade 3: %.2f\n", data[recid_list[i]].g3);
+        printf("Grade 4: %.2f\n", data[recid_list[i]].g4);
+        printf("Grade 5: %.2f\n", data[recid_list[i]].g5);
+        printf("Grade 6: %.2f\n", data[recid_list[i]].g6);
+        printf("Grade 7: %.2f\n", data[recid_list[i]].g7);
+        printf("Grade 8: %.2f\n", data[recid_list[i]].g8);
+        printf("GPA: %.2f\n", data[recid_list[i]].GPA);
         printf("=================================\n");
     }
 

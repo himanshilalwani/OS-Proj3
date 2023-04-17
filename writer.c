@@ -14,6 +14,8 @@
 #define SEM_WRITE "/write_sem"
 #define SEM_READ "/read_sem"
 
+#define FILENAME "Dataset-500.txt"
+
 typedef struct
 {
     int studentID;
@@ -172,8 +174,8 @@ int main(int argc, char *argv[])
     // modify the gpa based on new grades
     data[rec].GPA = (data[rec].g1 + data[rec].g2 + data[rec].g3 + data[rec].g4 + data[rec].g5 + data[rec].g6 + data[rec].g7 + data[rec].g8) / 8.0;
 
-    // open the students.csv file for writing
-    FILE *fp = fopen("students.csv", "w");
+    // open the file for writing
+    FILE *fp = fopen(FILENAME, "w");
     if (fp == NULL)
     {
         printf("Failed to open file\n");
@@ -189,18 +191,18 @@ int main(int argc, char *argv[])
     // loop through the array of student structs and write each struct to the file
     for (int i = 0; i < num_students; i++)
     {
-        fprintf(fp, "%d,", data[i].studentID);
-        fprintf(fp, "%s,", data[i].lastName);
-        fprintf(fp, "%s,", data[i].firstName);
-        fprintf(fp, "%.1f,", data[i].g1);
-        fprintf(fp, "%.1f,", data[i].g2);
-        fprintf(fp, "%.1f,", data[i].g3);
-        fprintf(fp, "%.1f,", data[i].g4);
-        fprintf(fp, "%.1f,", data[i].g5);
-        fprintf(fp, "%.1f,", data[i].g6);
-        fprintf(fp, "%.1f,", data[i].g7);
-        fprintf(fp, "%.1f,", data[i].g8);
-        fprintf(fp, "%.1f\n", data[i].GPA);
+        fprintf(fp, "%d ", data[i].studentID);
+        fprintf(fp, "%s ", data[i].lastName);
+        fprintf(fp, "%s ", data[i].firstName);
+        fprintf(fp, "%.2f ", data[i].g1);
+        fprintf(fp, "%.2f ", data[i].g2);
+        fprintf(fp, "%.2f ", data[i].g3);
+        fprintf(fp, "%.2f ", data[i].g4);
+        fprintf(fp, "%.2f ", data[i].g5);
+        fprintf(fp, "%.2f ", data[i].g6);
+        fprintf(fp, "%.2f ", data[i].g7);
+        fprintf(fp, "%.2f ", data[i].g8);
+        fprintf(fp, "%.2f\n", data[i].GPA);
     }
 
     // Close file

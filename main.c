@@ -12,7 +12,7 @@
 #define SEM_WRITE "/write_sem"
 #define SEM_READ "/read_sem"
 
-#define NUM_READERS 2    // this is readers at a time
+#define NUM_READERS 2      // this is readers at a time
 #define MAX_LINES_READ 500 // this is maximum number of lines a reader can read at a time
 #define FILENAME "Dataset-500.txt"
 
@@ -128,7 +128,7 @@ int main()
     char line[1024];
     char *token;
     int i = 0;
-    
+
     fp = fopen(FILENAME, "r");
     if (fp == NULL)
     {
@@ -139,44 +139,45 @@ int main()
     // load data in the student struct
     while (fgets(line, 1024, fp))
     {
+        printf("%d\n", i);
         token = strtok(line, " ");
         data[i].studentID = atoi(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         strcpy(data[i].lastName, token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         strcpy(data[i].firstName, token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g1 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g2 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g3 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g4 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g5 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g6 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g7 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].g8 = atof(token);
-
+        printf("%s\n", token);
         token = strtok(NULL, " ");
         data[i].GPA = atof(token);
+        printf("%s\n", token);
         i++;
     }
-    
 
     fclose(fp);
     // initialize struct values
@@ -188,118 +189,118 @@ int main()
     a->num_records = 0;
 
     // Fork writer process
-    pid_t pid = fork();
+    // pid_t pid = fork();
 
-    if (pid < 0)
-    {
-        perror("Failed to fork");
-        exit(EXIT_FAILURE);
-    }
+    // if (pid < 0)
+    // {
+    //     perror("Failed to fork");
+    //     exit(EXIT_FAILURE);
+    // }
 
-    if (pid == 0)
-    {
-        // srand(time(NULL));
-        // int random_time = (rand() % 5) + 1;
-        // char random_time_str[10];
-        // sprintf(random_time_str, "%d", random_time);
+    // if (pid == 0)
+    // {
+    //     // srand(time(NULL));
+    //     // int random_time = (rand() % 5) + 1;
+    //     // char random_time_str[10];
+    //     // sprintf(random_time_str, "%d", random_time);
 
-        // char key2_str[10];
-        // sprintf(key2_str, "%d", key2);
+    //     // char key2_str[10];
+    //     // sprintf(key2_str, "%d", key2);
 
-        // int random_record = rand() % i; // generate a random number between 0 and i-1
-        // char random_record_str[10];
-        // sprintf(random_record_str, "%d", random_record);
+    //     // int random_record = rand() % i; // generate a random number between 0 and i-1
+    //     // char random_record_str[10];
+    //     // sprintf(random_record_str, "%d", random_record);
 
-        // if (execlp("./writer", "./writer", "-f", FILENAME, "-l", random_record_str, "-d", random_time_str, "-s", key2_str, NULL) < 0)
-        // {
-        //     perror("Exec Error");
-        //     exit(EXIT_FAILURE);
-        // }
+    //     // if (execlp("./writer", "./writer", "-f", FILENAME, "-l", random_record_str, "-d", random_time_str, "-s", key2_str, NULL) < 0)
+    //     // {
+    //     //     perror("Exec Error");
+    //     //     exit(EXIT_FAILURE);
+    //     // }
 
-        exit(EXIT_SUCCESS);
-    }
-    if (pid > 0)
-    {
-        // Fork multiple reader processes
-        for (int j = 0; j < NUM_READERS; j++)
-        {
-            pid_t reader_pid = fork();
+    //     exit(EXIT_SUCCESS);
+    // }
+    // if (pid > 0)
+    // {
+    //     // Fork multiple reader processes
+    //     for (int j = 0; j < NUM_READERS; j++)
+    //     {
+    //         pid_t reader_pid = fork();
 
-            if (reader_pid < 0)
-            {
-                perror("Failed to fork");
-                exit(EXIT_FAILURE);
-            }
+    //         if (reader_pid < 0)
+    //         {
+    //             perror("Failed to fork");
+    //             exit(EXIT_FAILURE);
+    //         }
 
-            if (reader_pid == 0)
-            {
-                // Reader process
+    //         if (reader_pid == 0)
+    //         {
+    //             // Reader process
 
-                // Read student details
-                srand(getpid());
-                int x = rand() % MAX_LINES_READ + 1; // x is the random num of records the reader j can read
-                int *list = malloc(x * sizeof(int));
-                int num_to_read = 0;
+    //             // Read student details
+    //             srand(getpid());
+    //             int x = rand() % MAX_LINES_READ + 1; // x is the random num of records the reader j can read
+    //             int *list = malloc(x * sizeof(int));
+    //             int num_to_read = 0;
 
-                // for random line number
-                srand(getpid());
+    //             // for random line number
+    //             srand(getpid());
 
-                // update the list to include all the line numbers to read
-                while (num_to_read < x)
-                {
-                    int line_num = rand() % (i - 1);
-                    int exists = 0;
-                    // Check if the number already exists in the list
-                    for (int k = 0; k < num_to_read; k++)
-                    {
-                        if (list[k] == line_num)
-                        {
-                            exists = 1;
-                            break;
-                        }
-                    }
-                    // If the number is not in the list, add it
-                    if (!exists)
-                    {
-                        list[num_to_read] = line_num;
-                        num_to_read++;
-                    }
-                }
+    //             // update the list to include all the line numbers to read
+    //             while (num_to_read < x)
+    //             {
+    //                 int line_num = rand() % (i - 1);
+    //                 int exists = 0;
+    //                 // Check if the number already exists in the list
+    //                 for (int k = 0; k < num_to_read; k++)
+    //                 {
+    //                     if (list[k] == line_num)
+    //                     {
+    //                         exists = 1;
+    //                         break;
+    //                     }
+    //                 }
+    //                 // If the number is not in the list, add it
+    //                 if (!exists)
+    //                 {
+    //                     list[num_to_read] = line_num;
+    //                     num_to_read++;
+    //                 }
+    //             }
 
-                // Create a string to combine all values in list separated by comma
-                char list_string[100]; // assuming the maximum length of the resulting string is 100 characters
-                int index = 0;
+    //             // Create a string to combine all values in list separated by comma
+    //             char list_string[100]; // assuming the maximum length of the resulting string is 100 characters
+    //             int index = 0;
 
-                for (int i = 0; i < num_to_read; i++)
-                {
-                    index += sprintf(list_string + index, "%d,", list[i]);
-                }
-                // Remove the trailing comma
-                if (num_to_read > 0)
-                {
-                    list_string[index - 1] = '\0';
-                }
+    //             for (int i = 0; i < num_to_read; i++)
+    //             {
+    //                 index += sprintf(list_string + index, "%d,", list[i]);
+    //             }
+    //             // Remove the trailing comma
+    //             if (num_to_read > 0)
+    //             {
+    //                 list_string[index - 1] = '\0';
+    //             }
 
-                int random_time = (rand() % 5) + 1;
-                char random_time_str[10];
-                sprintf(random_time_str, "%d", random_time);
+    //             int random_time = (rand() % 5) + 1;
+    //             char random_time_str[10];
+    //             sprintf(random_time_str, "%d", random_time);
 
-                char key2_str[10];
-                sprintf(key2_str, "%d", key2);
-                // printf("List String: %s \n", list_string);
-                // printf("Time: %s\n", random_time_str);
-                // invoke reader
-                printf("Reader Number %d Executing:", j);
-                if (execlp("./reader", "./reader", "-f", FILENAME, "-l", list_string, "-d", random_time_str, "-s", key2_str, NULL) < 0)
-                {
-                    perror("Exec Error");
-                    exit(EXIT_FAILURE);
-                }
+    //             char key2_str[10];
+    //             sprintf(key2_str, "%d", key2);
+    //             // printf("List String: %s \n", list_string);
+    //             // printf("Time: %s\n", random_time_str);
+    //             // invoke reader
+    //             printf("Reader Number %d Executing:", j);
+    //             if (execlp("./reader", "./reader", "-f", FILENAME, "-l", list_string, "-d", random_time_str, "-s", key2_str, NULL) < 0)
+    //             {
+    //                 perror("Exec Error");
+    //                 exit(EXIT_FAILURE);
+    //             }
 
-                free(list);
+    //             free(list);
 
-                exit(EXIT_SUCCESS);
-            }
-        }
-    }
+    //             exit(EXIT_SUCCESS);
+    //         }
+    //     }
+    // }
 }

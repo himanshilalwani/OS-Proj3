@@ -229,7 +229,6 @@ int main(int argc, char *argv[])
             perror("sem_close");
             exit(EXIT_FAILURE);
         }
-        sprintf(sem_name, "/my_sem_%d", i);
     }
     sem_close(*sem_array);
     sem_close(analytics_sem);

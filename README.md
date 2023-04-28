@@ -24,7 +24,8 @@
 - "-n" totalrecords is the total number of records in the file
 
 ### Overview
-- The program, written in C, addresses the reader / writer problem. 
+- The program, written in C, addresses the reader / writer problem.
+- MyRecordDef.h stores the struct definition to store a record. 
 - It uses fork() and exec() to call reader.c and writer.c from main.c.
     - We used this approach because it was easier to link the two files and address the problem directly through main.c this way. 
     - There is a decider variable which ensures that 3/5th of the time a reader process is spawned and the remaining times, a writer process.   

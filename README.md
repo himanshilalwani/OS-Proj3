@@ -45,3 +45,4 @@
     - MAX_SLEEP_TIME: Maximum duration a reader / writer can sleep
     - FILENAME: Name of the file to work with
     - NUM_FORKS: Number of forks to create to spawn reader / writer processes
+ - In order to keep track of the operations performed by reader / writer processes, a log file is created. It can be used to verify the correctness of the program.

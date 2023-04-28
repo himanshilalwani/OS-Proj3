@@ -8,10 +8,20 @@
 ### Invoking Reader.c
 - gcc reader.c -o reader
 - ./reader  -f filename -l recidx1,recidx2 -d time -s shmid -n totalrecords
+- "-f" designates the binary text-file with name filename to work with
+- "-l" recidx indicates the IDXs of the records to be read by the program. It is a comma separated string.
+- "-d" time provides the time period that the process has to ‘stay with the records” it updates
+- "-s" shmid offers the key of the shared memory in which the structure of the records resides in
+- "-n" totalrecords is the total number of records in the file
 
 ### Invoking Writer.c
 - gcc writer.c -o writer
 - ./writer  -f filename -l recidx -d time -s shmid -n totalrecords
+- "-f" designates the binary text-file with name filename to work with
+- "-l" recidx indicates the IDX of the record to be updated by the program
+- "-d" time provides the time period that the process has to ‘stay with the records” it updates
+- "-s" shmid offers the key of the shared memory in which the structure of the records resides in
+- "-n" totalrecords is the total number of records in the file
 
 ### Overview
 - The program, written in C, addresses the reader / writer problem. 

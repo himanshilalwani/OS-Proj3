@@ -5,6 +5,19 @@
 - make
 - ./main
 
+### NOTE
+Our program is setup to work directly through the main only. reader.c and writer.c can not be invoked from terminal and expected to work similar to it would in through the main file. 
+
+In our main readers writers problem implementation, we are using forks to make the reader and writer processes randomly that are determined by the global variables at the start of the main.c . For every reader spawned, we decided the random number of records it will read (also set by maximum value in global variables section) and also the random record number. Note that record number is not the customer ID, it is just the line number for the file or the record number in the data file. 
+
+Also for the writer, the main randomly assigns a record for it to work on and that too is not the customer Id but the record number or line number in data file. 
+
+All the time calculations are done in ms.
+
+In the terminal, we are only printing the records that are being read, the records that are changed by the writer are logged in the txt file and updated directly in the data file. The changes made to a record are also random and constrained by the logic of the problem. 
+
+
+
 ### Invoking Reader.c
 - gcc reader.c -o reader
 - ./reader  -f filename -l recidx1,recidx2 -d time -s shmid -n totalrecords

@@ -13,6 +13,7 @@
 - gcc writer.c -o writer
 - ./writer  -f filename -l recidx -d time -s shmid -n totalrecords
 
+### Overview
 - The program, written in C, addresses the reader / writer problem. 
 - It uses fork() and exec() to call reader.c and writer.c from main.c.
     - We used this approach because it was easier to link the two files and address the problem directly through main.c this way. 
